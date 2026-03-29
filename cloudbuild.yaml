@@ -1,0 +1,22 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_IMAGE_URI}', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_URI}']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'web-company-management'
+      - '--image'
+      - '${_IMAGE_URI}'
+      - '--region'
+      - 'southamerica-east1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+substitutions:
+  _IMAGE_URI: southamerica-east1-docker.pkg.dev/low-carbon-491109/low-carbon/web-company-management:${SHORT_SHA}
+options:
+  logging: CLOUD_LOGGING_ONLY
